@@ -126,9 +126,7 @@ void Delay(__IO uint32_t nTime);
 void TimingDelay_Decrement(void);
 
 
-unsigned char Door_Open (void);
 unsigned short Get_Temp (void);
-unsigned short Get_Pote (void);
 void Update_PWM (unsigned short);
 
 // ------- del display -------
@@ -173,6 +171,7 @@ unsigned short vpote [LARGO_FILTRO + 1];
 //------------------------------------------//
 int main(void)
 {
+	unsigned char i;
 	unsigned char main_state = 0;
 	unsigned char last_function;
 	unsigned char last_program, last_program_deep;
@@ -222,25 +221,22 @@ int main(void)
 		 }
 	 }
 
-	 //PRUEBA LED Y OE
-	 /*
-	 while (1)
-	 {
-		 if (LED)
-		 {
-			 LED_OFF;
-			 OE_OFF;
-		 }
-		 else
-		 {
-			 LED_ON;
-			 OE_ON;
-		 }
-
-		 Wait_ms(150);
-	 }
-	 */
-	 //FIN PRUEBA LED Y OE
+	 //--- PRUEBA LED Y OE ---
+	//  while (1)
+	//  {
+	// 	 if (LED)
+	// 	 {
+	// 		 LED_OFF;
+	// 		 OE_OFF;
+	// 	 }
+	// 	 else
+	// 	 {
+	// 		 LED_ON;
+	// 		 OE_ON;
+	// 	 }
+	// 	 Wait_ms(1000);
+	//  }
+	 //--- FIN PRUEBA LED Y OE ---
 
 	 /* SPI configuration ------------------------------------------------------*/
 	 SPI_Config();
@@ -254,26 +250,46 @@ int main(void)
 	 //arranco con todo apagado
 	 DMX_Disa();
 
- 	//PRUEBA DISPLAY
-	 /*
-	 PWR_DS1_OFF;
-	 PWR_DS2_OFF;
-	 PWR_DS3_ON;
+ 	//--- PRUEBA DISPLAY ---
+	// //  PWR_DS1_OFF;
+	// //  PWR_DS2_OFF;
+	// //  PWR_DS3_ON;
+	//
+	// //  PWR_DS1_OFF;
+	// //  PWR_DS2_ON;
+	// //  PWR_DS3_OFF;
+	//
+	//  PWR_DS1_ON;
+	//  PWR_DS2_OFF;
+	//  PWR_DS3_OFF;
+	//
+	//  main_state = TranslateNumber(DISPLAY_LINE);
+	//  SendSegment(DISPLAY_DS1, main_state);
+	//  while(1);
+	 //--- FIN PRUEBA DISPLAY ---
 
-	 main_state = TranslateNumber(DISPLAY_LINE);
-	 SendSegment(DISPLAY_DS3, main_state);
-	 while(1);
-	 */
-	 /*
-	 //ShowNumbers(0);
-	 //ShowNumbers(876);
-	 ShowNumbers(666);
-	 //ShowNumbers(111);
-	 while(1)
-	 {
-		 UpdateDisplay ();
-	 }
-	*/
+ 	//--- PRUEBA NUMEROS EN DISPLAY ---
+	i = 0;
+	ds4_number = DISPLAY_P;
+	while (1)
+	{
+		if (!timer_standby)
+		{
+			if (i <= 255)
+			{
+				ShowNumbers(i);
+				i++;
+			}
+			else
+				i = 0;
+
+			timer_standby = 300;
+		}
+		UpdateDisplay ();
+	}
+	//--- FIN PRUEBA NUMEROS EN DISPLAY ---
+
+
 	 //--- PRUEBA TIM14 DMX
 	 /*
 	 ShowNumbers(0);
@@ -1467,16 +1483,6 @@ unsigned short MAFilter16 (unsigned char new_sample, unsigned char * vsample)
     return total_ma >> DIVISOR_F;
 }
 
-unsigned char Door_Open (void)
-{
-	if (door_filter >= DOOR_THRESH)
-		return 1;
-	else
-		return 0;
-}
-
-
-
 void SendSegment (unsigned char display, unsigned char segment)
 {
 	unsigned char displacement = 0;
@@ -1488,6 +1494,7 @@ void SendSegment (unsigned char display, unsigned char segment)
 	PWR_DS1_OFF;
 	PWR_DS2_OFF;
 	PWR_DS3_OFF;
+	PWR_DS4_OFF;
 
 //	dbkp = display;
 
@@ -1506,6 +1513,8 @@ void SendSegment (unsigned char display, unsigned char segment)
 		PWR_DS2_ON;
 	else if (display == DISPLAY_DS3)
 		PWR_DS3_ON;
+	else if (display == DISPLAY_DS4)
+		PWR_DS4_ON;
 
 #endif
 
@@ -1737,6 +1746,50 @@ void UpdateDisplay (void)
 					a = TranslateNumber(ds1_number);
 					SendSegment(DISPLAY_DS1, a);
 				}
+				display_state++;
+				break;
+
+			case 3:
+				//primero reviso si tengo blink de digito
+				if (display_blinking & DISPLAY_DS4)
+				{
+					//rutina blinking
+					if (!display_blinking_timer)
+					{
+						if (display_was_on)
+						{
+							a = TranslateNumber(DISPLAY_NONE);
+							SendSegment(DISPLAY_DS4, a);
+							display_was_on = 0;
+						}
+						else
+						{
+							a = TranslateNumber(ds4_number);
+							SendSegment(DISPLAY_DS4, a);
+							display_was_on =1;
+						}
+						display_blinking_timer = BLINKING_UPDATE;
+					}
+					else
+					{
+						if (display_was_on)		//si mostraba el numero sigo asi
+						{
+							a = TranslateNumber(ds4_number);
+							SendSegment(DISPLAY_DS4, a);
+						}
+						else
+						{
+							a = TranslateNumber(DISPLAY_NONE);
+							SendSegment(DISPLAY_DS4, a);
+						}
+						display_blinking_timer--;
+					}
+				}
+				else	//si no muestro como siempre
+				{
+					a = TranslateNumber(ds4_number);
+					SendSegment(DISPLAY_DS4, a);
+				}
 				display_state = 0;
 				break;
 
@@ -1822,7 +1875,8 @@ void EXTI4_15_IRQHandler(void)		//nueva detecta el primer 0 en usart Consola PHI
 {
 	unsigned short aux;
 
-	if(EXTI->PR & 0x0100)	//Line8
+	//if(EXTI->PR & 0x0100)	//Line8
+	if(EXTI->PR & 0x8000)	//Line15
 	{
 		//si no esta con el USART detecta el flanco	PONER TIMEOUT ACA?????
 		if ((dmx_receive_flag == 0) || (dmx_timeout_timer == 0))
@@ -1886,7 +1940,8 @@ void EXTI4_15_IRQHandler(void)		//nueva detecta el primer 0 en usart Consola PHI
 					break;
 			}
 		}
-		EXTI->PR |= 0x0100;
+		//EXTI->PR |= 0x0100;	//Line8
+		EXTI->PR |= 0x8000;	//Line15
 	}
 }
 

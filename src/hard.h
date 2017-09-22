@@ -114,7 +114,7 @@
 //GPIOB pin7 NC
 
 #define CH_IN_TEMP ADC_Channel_0
-// #define LAST_NUMBER		5
+#define LAST_NUMBER		5
 // #define LAST_NUMBER_SPEAK		5
 //
 // #define DOOR_ROOF	200

@@ -70,14 +70,14 @@ void GPIO_Config (void)
 
 #ifdef VER_1_0
 	temp = GPIOA->MODER;	//2 bits por pin
-	temp &= 0xFC0C0000;		//PA0 (analog input); PA1 output; PA2 PA3 input; PA4 PA5 output; PA6 PA7(alternative)
-	temp |= 0x0160A507;		//PA8 input; PA10 alternative;  PA11 PA12 output
-	//temp |= 0x0140A504;
+	temp &= 0x3C000000;		//PA0 (analog input); PA1 output; PA2 PA3 input; PA4 PA5 output; PA6 PA7(alternative)
+//	temp &= 0xFC000000;		//PA0 (analog input); PA1 output; PA2 PA3 input; PA4 PA5 output; PA6 PA7(alternative)
+	temp |= 0x016AA507;		//PA8 PA9 PA10 alternative;  PA11 PA12 output; PA15 input
 	GPIOA->MODER = temp;
 
 	temp = GPIOA->OTYPER;	//1 bit por pin
-	temp &= 0xFFFFE7E3;
-	temp |= 0x00000000;		//PA0 a PA6push pull
+	temp &= 0xFFFFFFFF;
+	temp |= 0x00000000;
 	GPIOA->OTYPER = temp;
 
 	temp = GPIOA->OSPEEDR;	//2 bits por pin
@@ -86,39 +86,13 @@ void GPIO_Config (void)
 	GPIOA->OSPEEDR = temp;
 
 	temp = GPIOA->PUPDR;	//2 bits por pin
-	temp &= 0xFFFCFF0F;
-	//temp |= 0x00020050;	//PA8 con pulldown
-	temp |= 0x00010050;		//PA8 con pullup
-	GPIOA->PUPDR = temp;
-#endif
-
-#if ((defined VER_1_1) || (defined VER_1_2) || (defined VER_1_3))
-	temp = GPIOA->MODER;	//2 bits por pin
-	temp &= 0xFC0C0000;		//PA0 (analog input); PA1 output; PA2 PA3 input; PA4 PA5 output; PA6 PA7(alternative)
-	temp |= 0x0160A507;		//PA8 input; PA10 alternative;  PA11 PA12 output
-	//temp |= 0x0140A504;
-	GPIOA->MODER = temp;
-
-	temp = GPIOA->OTYPER;	//1 bit por pin
-	temp &= 0xFFFFE7C3;
-	temp |= 0x00000000;		//PA0 a PA6push pull;	PA5 PA11 PA12 push pull
-	GPIOA->OTYPER = temp;
-
-	temp = GPIOA->OSPEEDR;	//2 bits por pin
-	temp &= 0xFC3FC000;
-	temp |= 0x00000000;		//low speed
-	GPIOA->OSPEEDR = temp;
-
-	temp = GPIOA->PUPDR;	//2 bits por pin
-	temp &= 0xFFFCFF0F;
-	//temp |= 0x00020050;	//PA8 con pulldown
-	temp |= 0x00010050;		//PA8 con pullup
+	temp &= 0x3FFFFF0F;
+	temp |= 0x40000050;		//PA3 PA4 PA15 con pullup
 	GPIOA->PUPDR = temp;
 #endif
 
 	//Alternate Fuction
 	//GPIOA->AFR[0] = 0x11000000;	//PA7 -> AF1; PA6 -> AF1
-
 
 #endif
 
@@ -129,22 +103,22 @@ void GPIO_Config (void)
 		GPIOB_CLK_ON;
 
 	temp = GPIOB->MODER;	//2 bits por pin
-	temp &= 0xFFFFC330;		//PB0 PB1 PB3 PB5 (alternative) PB6 out
-	temp |= 0x0000188A;
+	temp &= 0xFFFFC030;		//PB0 PB1 PB3 PB5 (alternative) PB4 PB6 out
+	temp |= 0x0000198A;
 	GPIOB->MODER = temp;
 
 	temp = GPIOB->OTYPER;	//1 bit por pin
-	temp &= 0xFFFFFFBC;
-	temp |= 0x00000000;		//PB1 push pull
+	temp &= 0xFFFFFFFF;
+	temp |= 0x00000000;
 	GPIOB->OTYPER = temp;
 
 	temp = GPIOB->OSPEEDR;	//2 bits por pin
-	temp &= 0xFFFFCFF0;
+	temp &= 0xFFFFC030;
 	temp |= 0x00000000;		//low speed
 	GPIOB->OSPEEDR = temp;
 
 	temp = GPIOB->PUPDR;	//2 bits por pin
-	temp &= 0xFFFFCFF0;
+	temp &= 0xFFFFFFFF;
 	temp |= 0x00000000;
 	GPIOB->PUPDR = temp;
 
@@ -188,10 +162,10 @@ void GPIO_Config (void)
 
 		SYSCFG->EXTICR[0] = 0x00000000; //Select Port A
 		SYSCFG->EXTICR[1] = 0x00000000; //Select Port A
-		EXTI->IMR |= 0x0100; 			//Corresponding mask bit for interrupts PA8
+		EXTI->IMR |= 0x8000; 			//Corresponding mask bit for interrupts PA15
 		EXTI->EMR |= 0x0000; 			//Corresponding mask bit for events
-		EXTI->RTSR |= 0x0100; 			//Pin Interrupt line on rising edge PA8
-		EXTI->FTSR |= 0x0100; 			//Pin Interrupt line on falling edge PA8
+		EXTI->RTSR |= 0x8000; 			//Pin Interrupt line on rising edge PA15
+		EXTI->FTSR |= 0x8000; 			//Pin Interrupt line on falling edge PA15
 
 		NVIC_EnableIRQ(EXTI4_15_IRQn);
 		NVIC_SetPriority(EXTI4_15_IRQn, 2);
