@@ -154,6 +154,7 @@ void TIM_3_Init (void)
 	TIM3->CR2 = 0x00;		//igual al reset
 
 	TIM3->SMCR |= TIM_SMCR_SMS_2;			//reset mode link timer 1
+	//TIM3->SMCR |= TIM_SMCR_SMS_2 | TIM_SMCR_SMS_1;			//trigger mode link timer 1
 
 	TIM3->CCMR1 = 0x7070;			//CH2 y CH1 output PWM mode 2
 	TIM3->CCMR2 = 0x7070;			//CH4 y CH3 output PWM mode 2

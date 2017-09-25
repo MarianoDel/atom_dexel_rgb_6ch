@@ -78,6 +78,8 @@ volatile unsigned char * prx2;
 #ifdef USE_USART1
 void USART1Config(void)
 {
+	unsigned long temp;
+
 	if (!USART1_CLK)
 		USART1_CLK_ON;
 
@@ -92,7 +94,11 @@ void USART1Config(void)
 	USART1->CR1 = USART_CR1_RXNEIE | USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;	//para pruebas TX
 
 	//habilito el pin
-	GPIOA->AFR[1] = 0x00000100;	//PA10 -> AF1
+	//Alternate Fuction
+	temp = GPIOA->AFR[1];
+	temp |= 	0x00000100;			//PA10 -> AF1
+	GPIOA->AFR[1] = temp;
+
 
 	NVIC_EnableIRQ(USART1_IRQn);
 	NVIC_SetPriority(USART1_IRQn, 5);

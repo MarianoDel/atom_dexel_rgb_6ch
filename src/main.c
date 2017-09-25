@@ -178,6 +178,8 @@ int main(void)
 	unsigned short last_channel;
 	unsigned short current_temp = 0;
 
+//	unsigned char sw_state = 0;
+
 #ifdef WITH_GRANDMASTER
 	unsigned short acc = 0;
 	unsigned char dummy = 0;
@@ -197,11 +199,6 @@ int main(void)
 	//GPIO Configuration.
 	GPIO_Config();
 
-	//TIM Configuration.
-	TIM_1_Init();
-	TIM_3_Init();
-	TIM_14_Init();
-
 	//ACTIVAR SYSTICK TIMER
 	 if (SysTick_Config(48000))
 	 {
@@ -220,6 +217,26 @@ int main(void)
 			}
 		 }
 	 }
+
+	 //TIM Configuration.
+ 	TIM_1_Init();
+ 	TIM_3_Init();
+ 	TIM_14_Init();
+
+	//--- PRUEBA PWM TIM1
+	// while (1)
+	// {
+	// 	for (i = 0; i < 255; i++)
+	// 	{
+	// 	  	UV_PWM (i);
+	// 	  	AMBER_PWM (i);
+	// 		// Update_TIM1_CH1 (i);
+	// 		// Update_TIM2_CH2 (i);
+	//
+	// 		Wait_ms(100);
+	// 	}
+	// }
+	//--- FIN PRUEBA PWM TIM1
 
 	 //--- PRUEBA LED Y OE ---
 	//  while (1)
@@ -269,47 +286,45 @@ int main(void)
 	 //--- FIN PRUEBA DISPLAY ---
 
  	//--- PRUEBA NUMEROS EN DISPLAY ---
-	i = 0;
-	ds4_number = DISPLAY_P;
-	while (1)
-	{
-		if (!timer_standby)
-		{
-			if (i <= 255)
-			{
-				ShowNumbers(i);
-				i++;
-			}
-			else
-				i = 0;
-
-			timer_standby = 300;
-		}
-		UpdateDisplay ();
-	}
+	// i = 0;
+	// ds4_number = DISPLAY_P;
+	// while (1)
+	// {
+	// 	if (!timer_standby)
+	// 	{
+	// 		if (i <= 255)
+	// 		{
+	// 			ShowNumbers(i);
+	// 			i++;
+	// 		}
+	// 		else
+	// 			i = 0;
+	//
+	// 		timer_standby = 300;
+	// 	}
+	// 	UpdateDisplay ();
+	// }
 	//--- FIN PRUEBA NUMEROS EN DISPLAY ---
 
 
 	 //--- PRUEBA TIM14 DMX
-	 /*
-	 ShowNumbers(0);
-	 while (1)
-	 {
-		 TIM14->CNT = 0;
-		 TIM14->CR1 |= 0x0001;
-
-		 while ((TIM14->CNT) < 2000)
-		 {
-		 }
-		 TIM14->CR1 &= ~0x0001;
-		 if (LED)
-			 LED_OFF;
-		 else
-			 LED_ON;
-
-		 UpdateDisplay ();
-	 }
-	 */
+	//  ShowNumbers(0);
+	//  while (1)
+	//  {
+	// 	 TIM14->CNT = 0;					//tick cada 1us
+	// 	 TIM14->CR1 |= 0x0001;
+	 //
+	// 	 while ((TIM14->CNT) < 2000)	//2ms
+	// 	 {
+	// 	 }
+	// 	 TIM14->CR1 &= ~0x0001;
+	// 	 if (LED)
+	// 		 LED_OFF;
+	// 	 else
+	// 		 LED_ON;
+	 //
+	// 	 UpdateDisplay ();
+	//  }
 	 //--- FIN PRUEBA TIM14 DMX
 
 	 //--- PRUEBA USART
@@ -380,18 +395,16 @@ int main(void)
 	//--- FIN ADC
 
 		 //--- PRUEBA FAN
-	 /*
-			while (1)
-			{
-				LED_ON;
-				CTRL_FAN_ON;
-				Wait_ms(300);
-				LED_OFF;
-				CTRL_FAN_OFF;
-				Wait_ms(300);
-			}
-			*/
-		//--- FIN FAN
+		//  while (1)
+		//  {
+		// 	 LED_ON;
+		// 	 CTRL_FAN_ON;
+		// 	 Wait_ms(300);
+		// 	 LED_OFF;
+		// 	 CTRL_FAN_OFF;
+		// 	 Wait_ms(300);
+		//  }
+		//--- FIN PRUEBA FAN
 
 	//--- PRUEBA CH0 DMX con switch de display	inicializo mas arriba USART y variables
 	 /*
@@ -432,58 +445,56 @@ int main(void)
 	*/
 	//--- FIN PRUEBA CH0 DMX
 
-	//--- PRUEBA blinking de display	inicializo mas arriba USART y variables
-	 /*
-	ds1_number = 1;
-	ds2_number = 2;
-	ds3_number = 3;
-		 while (1)
-		 {
-			 if (CheckS1() > S_NO)
-			 {
-				 //muevo el display en blinking
-				 display_blinking <<= 1;
-				 if (!(display_blinking & 0x07))
-					 display_blinking = DISPLAY_DS1;
-			 }
-			 else if (CheckS2() > S_NO)
-			 {
-				 //prendo o apago el blinking
-				 if (sw_state)
-				 {
-					 display_blinking = 0;
-					 sw_state = 0;
-				 }
-				 else
-				 {
-					 display_blinking = DISPLAY_DS1;
-					 sw_state = 1;
-				 }
-			 }
-
-			 UpdateDisplay ();
-			 UpdateSwitches ();
-
-		 }
-
-	  */
-	//--- FIN PRUEBA blinking display con switches
+	//--- PRUEBA blinking de display y pulsadores
+	//	//activar unsigned char sw_state en main
+	// ds1_number = 1;
+	// ds2_number = 2;
+	// ds3_number = 3;
+	// 	 while (1)
+	// 	 {
+	// 		 if (CheckS1() > S_NO)
+	// 		 {
+	// 			 //muevo el display en blinking
+	// 			 display_blinking <<= 1;
+	// 			 if (!(display_blinking & 0x07))
+	// 				 display_blinking = DISPLAY_DS1;
+	// 		 }
+	// 		 else if (CheckS2() > S_NO)
+	// 		 {
+	// 			 //prendo o apago el blinking
+	// 			 if (sw_state)
+	// 			 {
+	// 				 display_blinking = 0;
+	// 				 sw_state = 0;
+	// 			 }
+	// 			 else
+	// 			 {
+	// 				 display_blinking = DISPLAY_DS1;
+	// 				 sw_state = 1;
+	// 			 }
+	// 		 }
+	// 		 UpdateDisplay ();
+	// 		 UpdateSwitches ();
+	// 	 }
+	//--- FIN PRUEBA blinking de display y pulsadores
 
 	//--- PRUEBA CHANNELS PWM
-	/*
+
 	while (1)
 	{
 		for (i = 0; i < 255; i++)
 		{
-			Update_TIM3_CH1 (i);
-			Update_TIM3_CH2 (i);
-			Update_TIM3_CH3 (i);
-			Update_TIM3_CH4 (i);
+			RED_PWM (i);
+		  	GREEN_PWM (i);
+		  	BLUE_PWM (i);
+		  	WHITE_PWM (i);
+		  	UV_PWM (i);
+		  	AMBER_PWM (i);
 
 			Wait_ms(100);
 		}
 	}
-	*/
+
 	//--- FIN PRUEBA CHANNELS PWM
 
 	 //--- PRUEBA SWITCHES

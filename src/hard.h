@@ -30,8 +30,8 @@
 //#define RGB_FOR_CHANNELS_CH2_CH4_SYNC
 #endif
 //-------- Configuration for Outputs-Channels -----
-//#define RGB_OUTPUT_LM317
-#define RGB_OUTPUT_MOSFET_KIRNO
+#define RGB_OUTPUT_LM317
+//#define RGB_OUTPUT_MOSFET_KIRNO
 //#define RGB_OUTPUT_CAT
 #endif
 
