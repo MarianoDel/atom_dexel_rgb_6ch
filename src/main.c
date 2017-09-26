@@ -684,6 +684,7 @@ int main(void)
 				{
 					FromChannelToDs(last_channel);		//muestro el ultimo canal DMX seleccionado
 					DMX_channel_selected = last_channel;
+					ds4_number = DISPLAY_C;
 					DMX_Ena();
 					main_state = MAIN_DMX_NORMAL;
 					timer_dmx_display_show = DMX_DISPLAY_SHOW_TIMEOUT;
@@ -716,6 +717,8 @@ int main(void)
 		  	 	AMBER_PWM (0);
 
 				FromChannelToDs(last_channel);		//muestro el ultimo canal DMX seleccionado
+				ds4_number = DISPLAY_C;
+				
 				timer_standby = TIMER_STANDBY_TIMEOUT;
 				main_state++;
 				break;
@@ -929,6 +932,7 @@ int main(void)
 						 timer_standby = TIMER_STANDBY_TIMEOUT;
 					 }
 					 FromChannelToDs(last_channel);
+					 ds4_number = DISPLAY_C;
 				 }
 
 				 if (!timer_dmx_display_show)
@@ -948,6 +952,7 @@ int main(void)
 				ds1_number = DISPLAY_PROG;
 				ds2_number = last_program;		//program no puede ser menor a 1
 				ds3_number = last_program_deep;	//program_deep no puede ser menor a 1
+				ds4_number = DISPLAY_NONE;
 
 				display_blinking = DISPLAY_DS2;
 
@@ -960,6 +965,7 @@ int main(void)
 				ds1_number = DISPLAY_C;
 				ds2_number = DISPLAY_H;		//program no puede ser menor a 1
 				ds3_number = last_program;	//program_deep no puede ser menor a 1
+				ds4_number = DISPLAY_NONE;
 
 				display_blinking = 0;
 				need_to_save = 1;			//tengo que grabar, vengo de DMX

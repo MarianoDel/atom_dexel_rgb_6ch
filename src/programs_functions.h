@@ -12,10 +12,10 @@
 
 
 //-------- Defines -------------
-#define WHITE_PWM(X)	Update_TIM3_CH1((X))
-#define BLUE_PWM(X)		Update_TIM3_CH2((X))
-#define GREEN_PWM(X)	Update_TIM3_CH3((X))
-#define RED_PWM(X)		Update_TIM3_CH4((X))
+#define WHITE_PWM(X)	Update_TIM3_CH4((X))
+#define BLUE_PWM(X)		Update_TIM3_CH3((X))
+#define GREEN_PWM(X)	Update_TIM3_CH2((X))
+#define RED_PWM(X)		Update_TIM3_CH1((X))
 #define UV_PWM(X)		Update_TIM1_CH1((X))
 #define AMBER_PWM(X)		Update_TIM1_CH2((X))
 
