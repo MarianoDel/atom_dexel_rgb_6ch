@@ -26,7 +26,7 @@
 #define GPIOB_ENABLE
 //#define GPIOF_ENABLE
 
-//#define WITH_EXTI
+#define WITH_EXTI
 
 #define GPIOA_CLK (RCC->AHBENR & 0x00020000)
 #define GPIOA_CLK_ON RCC->AHBENR |= 0x00020000

@@ -109,10 +109,10 @@ void USART1_IRQHandler(void)
 	unsigned short i;
 	unsigned char dummy;
 
-	if (LED)
-		LED_OFF;
-	else
-		LED_ON;
+	// if (LED)
+	// 	LED_OFF;
+	// else
+	// 	LED_ON;
 
 	/* USART in mode Receiver --------------------------------------------------*/
 	if (USART1->ISR & USART_ISR_RXNE)
@@ -150,11 +150,23 @@ void USART1_IRQHandler(void)
 #else
 			if (DMX_channel_received >= (DMX_channel_selected + DMX_channel_quantity))
 			{
+				//LED_OFF;
 				//los paquetes empiezan en 0 pero no lo verifico
 				for (i=0; i<DMX_channel_quantity; i++)
 				{
-					data[i] = data1[(DMX_channel_selected) + i];
+					data[i] = data1[(DMX_channel_selected) + i];		//no pasa el canal 0
 				}
+
+				// if (data[0] != 0)
+				// {
+				// 	if (LED)
+				// 		LED_OFF;
+				// 	else
+				// 		LED_ON;
+				// }
+				LED_OFF;
+
+
 
 				//--- Reception end ---//
 				DMX_channel_received = 0;

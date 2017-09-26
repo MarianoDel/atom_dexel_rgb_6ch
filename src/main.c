@@ -58,7 +58,7 @@ volatile unsigned char DMX_channel_quantity = 4;		//TODO: mejorar esto, relacion
 
 volatile unsigned char data1[512];
 //static unsigned char data_back[10];
-volatile unsigned char data[12];			//TODO: mejorar esto es el doble de los canales a recibir
+volatile unsigned char data[14];			//TODO: mejorar esto es el doble de los canales a recibir + grandmaster
 
 volatile unsigned short prog_timer = 0;
 
@@ -73,9 +73,9 @@ volatile unsigned char switches_timer;
 volatile unsigned char filter_timer;
 static __IO uint32_t TimingDelay;
 
-volatile unsigned char door_filter;
+//volatile unsigned char door_filter;
 volatile unsigned char take_sample;
-volatile unsigned char move_relay;
+//volatile unsigned char move_relay;
 
 volatile unsigned char secs = 0;
 volatile unsigned short minutes = 0;
@@ -159,7 +159,7 @@ unsigned char MAFilter (unsigned char, unsigned char *);
 //#define LARGO_FILTRO 32
 //#define DIVISOR      5   //2 elevado al divisor = largo filtro
 unsigned short vtemp [LARGO_FILTRO + 1];
-unsigned short vpote [LARGO_FILTRO + 1];
+//unsigned short vpote [LARGO_FILTRO + 1];
 
 //--- FIN DEFINICIONES DE FILTRO ---//
 
@@ -406,44 +406,30 @@ int main(void)
 		//  }
 		//--- FIN PRUEBA FAN
 
-	//--- PRUEBA CH0 DMX con switch de display	inicializo mas arriba USART y variables
-	 /*
-	 while (1)
-	 {
-		 if (CheckS1() > S_NO)
-			 sw_state = 1;
-		 else if (CheckS2() > S_NO)
-			 sw_state = 0;
-
-		 if (sw_state)		//si tengo que estar prendido
-		 {
-			 if (Packet_Detected_Flag)
-			 {
-				 //llego un paquete DMX
-				 Packet_Detected_Flag = 0;
-				 //en data tengo la info
-				 ShowNumbers (data[0]);
-
-				 Update_TIM3_CH1 (data[0]);
-				 Update_TIM3_CH2 (data[1]);
-				 Update_TIM3_CH3 (data[2]);
-				 Update_TIM3_CH4 (data[3]);
-
-			 }
-		 }
-		 else	//apago los numeros
-		 {
-			 ds1_number = 0;
-			 ds2_number = 0;
-			 ds3_number = 0;
-		 }
-
-		 UpdateDisplay ();
-		 UpdateSwitches ();
-
-	 }
-	*/
-	//--- FIN PRUEBA CH0 DMX
+	//--- PRUEBA CH0 CH1 CH2 CH3 DMX	inicializo mas arriba USART y variables
+	// 	DMX_Ena();
+	//  while (1)
+	//  {
+	// 		 if (Packet_Detected_Flag)
+	// 		 {
+	 //
+	// 			 //llego un paquete DMX
+	// 			 Packet_Detected_Flag = 0;
+	// 			 //en data tengo la info
+	// 			 ShowNumbers (data[0]);
+	// 			 //LED_OFF;
+	// 			 Update_TIM3_CH1 (data[0]);
+	// 			 Update_TIM3_CH2 (data[0]);
+	// 			 Update_TIM3_CH3 (data[0]);
+	// 			 Update_TIM3_CH4 (data[0]);
+	 //
+	// 		 }
+	 //
+	// 	 UpdateDisplay ();
+	// 	 UpdateSwitches ();
+	 //
+	//  }
+	//--- FIN PRUEBA CH0 CH1 CH2 CH3 DMX
 
 	//--- PRUEBA blinking de display y pulsadores
 	//	//activar unsigned char sw_state en main
@@ -479,84 +465,21 @@ int main(void)
 	//--- FIN PRUEBA blinking de display y pulsadores
 
 	//--- PRUEBA CHANNELS PWM
-
-	while (1)
-	{
-		for (i = 0; i < 255; i++)
-		{
-			RED_PWM (i);
-		  	GREEN_PWM (i);
-		  	BLUE_PWM (i);
-		  	WHITE_PWM (i);
-		  	UV_PWM (i);
-		  	AMBER_PWM (i);
-
-			Wait_ms(100);
-		}
-	}
-
+	// while (1)
+	// {
+	// 	for (i = 0; i < 255; i++)
+	// 	{
+	// 		RED_PWM (i);
+	// 	  	GREEN_PWM (i);
+	// 	  	BLUE_PWM (i);
+	// 	  	WHITE_PWM (i);
+	// 	  	UV_PWM (i);
+	// 	  	AMBER_PWM (i);
+	//
+	// 		Wait_ms(100);
+	// 	}
+	// }
 	//--- FIN PRUEBA CHANNELS PWM
-
-	 //--- PRUEBA SWITCHES
-	 /*
-	 i = 0;
-	 while (1)
-	 {
-			 switch (swi)
-			 {
-				 case 0:
-					 s_local = CheckS1();
-					 if (s_local > S_NO)
-						 swi++;
-					 else
-					 {
-						 s_local = CheckS2();
-						 if (s_local > S_NO)
-							 swi = 10;
-					 }
-
-					 break;
-
-				 case 1:
-					 i += s_local;
-					 LED_ON;
-					 swi++;
-					 break;
-
-				 case 2:
-					 //espero que se libere
-					 s_local = CheckS1();
-					 if (s_local == S_NO)
-						 swi = 0;
-
-					 break;
-
-				 case 10:
-					 LED_OFF;
-					 if (i)
-						 i--;
-					swi++;
-					break;
-
-				 case 11:
-					 s_local = CheckS2();
-					 if (s_local == S_NO)
-						 swi = 0;
-					break;
-
-				 default:
-					 swi = 0;
-					 break;
-
-		 }
-
-
-		 ShowNumbers(i);
-		 UpdateDisplay ();
-		 UpdateSwitches ();
-	 }
-	 */
-	 //--- FIN PRUEBA SWITCHES
 
 
 	 //--- COMIENZO PROGRAMA DE PRODUCCION
@@ -621,7 +544,7 @@ int main(void)
 	timer_standby = 1000;
 	ds1_number = DISPLAY_S;				//Software
 	ds2_number = DISPLAY_1P;			//1.
-	ds3_number = 0;						//0
+	ds3_number = DISPLAY_ZERO;			//0
 	while (timer_standby)
 		UpdateDisplay();
 #endif
@@ -755,8 +678,6 @@ int main(void)
 					fixed_data[0] = param_struct.pwm_channel_1;
 					fixed_data[1] = param_struct.pwm_channel_2;
 #endif
-
-
 				}
 
 				if (last_function == FUNCTION_DMX)
@@ -959,29 +880,26 @@ int main(void)
 				 {
 					 filter_timer = 5;
 
-					 //data[9] = MAFilter(data[4], vd4);
-					 //data[9] = data[4];
-
-					 acc = data[0] * data[4];
-					 data[5] = acc >> 8;
-					 acc = data[1] * data[4];
-					 data[6] = acc >> 8;
-					 acc = data[2] * data[4];
+					 acc = data[0] * data[6];
 					 data[7] = acc >> 8;
-					 acc = data[3] * data[4];
+					 acc = data[1] * data[6];
 					 data[8] = acc >> 8;
+					 acc = data[2] * data[6];
+					 data[9] = acc >> 8;
+					 acc = data[3] * data[6];
+					 data[10] = acc >> 8;
+					 acc = data[4] * data[6];
+					 data[11] = acc >> 8;
+					 acc = data[5] * data[6];
+					 data[12] = acc >> 8;
 
-					 RED_PWM (MAFilter(data[5], vd0));	//RED
-					 GREEN_PWM (MAFilter(data[6], vd1));	//GREEN
-					 BLUE_PWM (MAFilter(data[7], vd2));	//BLUE
-					 WHITE_PWM (MAFilter(data[8], vd3));	//WHITE
-					 UV_PWM (MAFilter(data[9], vd3));	//UV
-					 AMBER_PWM (MAFilter(data[10], vd3));	//AMBER
+					 RED_PWM (MAFilter(data[7], vd0));	//RED
+					 GREEN_PWM (MAFilter(data[8], vd1));	//GREEN
+					 BLUE_PWM (MAFilter(data[9], vd2));	//BLUE
+					 WHITE_PWM (MAFilter(data[10], vd3));	//WHITE
+					 UV_PWM (MAFilter(data[11], vd4));	//UV
+					 AMBER_PWM (MAFilter(data[12], vd5));	//AMBER
 
-					 //RED_PWM (MAFilter(data[0], vd0));	//RED
-					 //GREEN_PWM (MAFilter(data[1], vd1));	//GREEN
-					 //BLUE_PWM (MAFilter(data[2], vd2));	//BLUE
-					 //WHITE_PWM (MAFilter(data[3], vd3));	//WHITE
 				 }
 #else
 				 if (!filter_timer)
@@ -993,8 +911,8 @@ int main(void)
 					 GREEN_PWM (MAFilter(data[1], vd1));	//GREEN
 					 BLUE_PWM (MAFilter(data[2], vd2));	//BLUE
 					 WHITE_PWM (MAFilter(data[3], vd3));	//WHITE
-					 UV_PWM (MAFilter(data[4], vd3));	//UV
-					 AMBER_PWM (MAFilter(data[5], vd3));	//AMBER
+					 UV_PWM (MAFilter(data[4], vd4));	//UV
+					 AMBER_PWM (MAFilter(data[5], vd5));	//AMBER
 				 }
 #endif
 
@@ -1936,6 +1854,7 @@ void EXTI4_15_IRQHandler(void)		//nueva detecta el primer 0 en usart Consola PHI
 					{
 						//ya tenia el serie habilitado
 						dmx_receive_flag = 1;
+						LED_ON;
 					}
 					else	//falso disparo
 					{
